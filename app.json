@@ -27,7 +27,7 @@
       "favicon": "./assets/favicon.png",
       "bundler": "webpack"
     },
-    "scheme": "front-chat-app",
+
     "extra": {
       "eas": {
         "projectId": "3f81e023-4092-4132-80bf-a8d879167538"

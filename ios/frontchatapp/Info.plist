@@ -27,7 +27,7 @@
       <dict>
         <key>CFBundleURLSchemes</key>
         <array>
-          <string>front-chat-app</string>
+          <string>com.queryhealth.app</string>
           <string>com.queryhealth.app</string>
         </array>
       </dict>
