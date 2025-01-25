@@ -19,7 +19,7 @@ const WelcomeScreen: React.FC<WelcomeScreenProps> = ({ navigation }) => {
 
       <Pressable
         style={styles.startButton}
-        onPress={() => navigation.navigate('SignUp')}
+        onPress={() => navigation.navigate('Auth')}
       >
         <Text style={styles.startButtonText}>Let's get started</Text>
         <Ionicons name='arrow-forward' size={24} color='white' />

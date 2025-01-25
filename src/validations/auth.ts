@@ -1,5 +1,5 @@
 import * as yup from 'yup'
-import { RegisterData } from '@/types/auth'
+import { LoginData, RegisterData } from '@/features/auth/types/auth'
 
 export const AUTH_ERRORS = {
   REQUIRED_USERNAME: 'Nombre de usuario es requerido',
@@ -20,4 +20,8 @@ export const signUpSchema: yup.ObjectSchema<RegisterData> = yup.object().shape({
     .string()
     .min(6, AUTH_ERRORS.MIN_PASSWORD)
     .required(AUTH_ERRORS.REQUIRED_PASSWORD)
+})
+export const loginSchema: yup.ObjectSchema<LoginData> = yup.object().shape({
+  email: yup.string().required(AUTH_ERRORS.REQUIRED_EMAIL),
+  password: yup.string().required(AUTH_ERRORS.REQUIRED_PASSWORD)
 })
