@@ -1,30 +1,17 @@
 import React from 'react'
-import {
-  View,
-  Text,
-  TextInput,
-  Pressable,
-  ActivityIndicator,
-  StyleSheet
-} from 'react-native'
+import { View, Text, TextInput, StyleSheet } from 'react-native'
 import { useForm, Controller } from 'react-hook-form'
 import { useSelector } from 'react-redux'
 import { yupResolver } from '@hookform/resolvers/yup'
-import { useNavigation } from '@react-navigation/native'
-import type { NativeStackNavigationProp } from '@react-navigation/native-stack'
-import { register } from '@/features/auth/thunks/authThunks'
 import { RegisterData } from '@/features/auth/types/auth'
 import { colors, spacing, typography } from '@/theme'
 import { RootState } from '@/store/config/store'
-import { RootStackParamList } from '@/navigation/types'
 import { signUpSchema } from '@/validations/auth'
-import { useAppDispatch } from '@/store/hooks'
-import GoogleSignUpButton from '@/components/screens/auth/GoogleSignUpButton'
+import PrimaryButton from '@/components/common/buttons/PrimaryButton'
+import { useRegisterForm } from '@/features/auth/hooks/useAuth'
 
 const RegisterForm = () => {
-  const navigation =
-    useNavigation<NativeStackNavigationProp<RootStackParamList>>()
-  const dispatch = useAppDispatch()
+  const onSubmit = useRegisterForm()
   const { isLoading, error } = useSelector((state: RootState) => state.auth)
   const {
     control,
@@ -33,13 +20,6 @@ const RegisterForm = () => {
   } = useForm<RegisterData>({
     resolver: yupResolver(signUpSchema)
   })
-
-  const onSubmit = async (data: RegisterData) => {
-    const success = await dispatch(register(data))
-    if (success) {
-      navigation.navigate('Home')
-    }
-  }
 
   return (
     <View style={styles.formContainer}>
@@ -59,6 +39,8 @@ const RegisterForm = () => {
                 value={value}
                 editable={!isLoading}
                 autoCapitalize='none'
+                returnKeyType='next'
+                blurOnSubmit={false}
               />
               {errors.username && (
                 <Text style={styles.errorText}>{errors.username.message}</Text>
@@ -83,6 +65,8 @@ const RegisterForm = () => {
                 keyboardType='email-address'
                 autoCapitalize='none'
                 editable={!isLoading}
+                returnKeyType='next'
+                blurOnSubmit={false}
               />
               {errors.email && (
                 <Text style={styles.errorText}>{errors.email.message}</Text>
@@ -107,6 +91,8 @@ const RegisterForm = () => {
                 secureTextEntry
                 editable={!isLoading}
                 autoCapitalize='none'
+                returnKeyType='done'
+                onSubmitEditing={handleSubmit(onSubmit)}
               />
               {errors.password && (
                 <Text style={styles.errorText}>{errors.password.message}</Text>
@@ -116,28 +102,12 @@ const RegisterForm = () => {
         />
       </View>
 
-      <Pressable
-        style={({ pressed }) => [
-          styles.submitButton,
-          { opacity: pressed ? 0.5 : 1 }
-        ]}
+      <PrimaryButton
+        title='Sign Up'
         onPress={handleSubmit(onSubmit)}
         disabled={isLoading}
-      >
-        {isLoading ? (
-          <ActivityIndicator color='white' />
-        ) : (
-          <Text style={styles.submitButtonText}>Sign Up</Text>
-        )}
-      </Pressable>
-
-      <View style={styles.dividerContainer}>
-        <View style={styles.divider} />
-        <Text style={styles.dividerText}>or</Text>
-        <View style={styles.divider} />
-      </View>
-
-      <GoogleSignUpButton />
+        loading={isLoading}
+      />
     </View>
   )
 }

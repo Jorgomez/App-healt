@@ -2,6 +2,7 @@ import React from 'react'
 import { View, Text, Pressable, StyleSheet, SafeAreaView } from 'react-native'
 import { Ionicons } from '@expo/vector-icons'
 import { WelcomeScreenProps } from '@/navigation/types'
+import PrimaryButton from '@/components/common/buttons/PrimaryButton'
 
 const WelcomeScreen: React.FC<WelcomeScreenProps> = ({ navigation }) => {
   return (
@@ -17,13 +18,11 @@ const WelcomeScreen: React.FC<WelcomeScreenProps> = ({ navigation }) => {
         </Text>
       </View>
 
-      <Pressable
-        style={styles.startButton}
+      <PrimaryButton
+        title="Let's get started"
         onPress={() => navigation.navigate('Auth')}
-      >
-        <Text style={styles.startButtonText}>Let's get started</Text>
-        <Ionicons name='arrow-forward' size={24} color='white' />
-      </Pressable>
+        icon='arrow-forward'
+      />
     </SafeAreaView>
   )
 }

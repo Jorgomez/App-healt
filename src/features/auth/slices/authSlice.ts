@@ -1,5 +1,13 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
-import { AuthMode, AuthState, User } from '../types/auth'
+import { User } from '../types/auth'
+
+interface AuthState {
+  user: User | null
+  isAuthenticated: boolean
+  isLoading: boolean
+  error: string | null
+  mode: 'login' | 'register'
+}
 
 const initialState: AuthState = {
   user: null,
@@ -13,31 +21,16 @@ const authSlice = createSlice({
   name: 'auth',
   initialState,
   reducers: {
-    registerStart: (state) => {
+    authStart: (state) => {
       state.isLoading = true
       state.error = null
     },
-    registerSuccess: (state, action: PayloadAction<User>) => {
+    authSuccess: (state, action: PayloadAction<User>) => {
       state.isLoading = false
       state.isAuthenticated = true
       state.user = action.payload
-      state.error = null
     },
-    registerFailure: (state, action: PayloadAction<string>) => {
-      state.isLoading = false
-      state.error = action.payload
-    },
-    loginStart: (state) => {
-      state.isLoading = true
-      state.error = null
-    },
-    loginSuccess: (state, action: PayloadAction<User>) => {
-      state.isLoading = false
-      state.isAuthenticated = true
-      state.user = action.payload
-      state.error = null
-    },
-    loginFailure: (state, action: PayloadAction<string>) => {
+    authFailure: (state, action: PayloadAction<string>) => {
       state.isLoading = false
       state.error = action.payload
     },
@@ -47,21 +40,13 @@ const authSlice = createSlice({
       state.error = null
       state.mode = 'login'
     },
-    setAuthMode: (state, action: PayloadAction<AuthMode>) => {
+    setAuthMode: (state, action: PayloadAction<'login' | 'register'>) => {
       state.mode = action.payload
     }
   }
 })
 
-export const {
-  registerStart,
-  registerSuccess,
-  registerFailure,
-  loginStart,
-  loginSuccess,
-  loginFailure,
-  logout,
-  setAuthMode
-} = authSlice.actions
+export const { authStart, authSuccess, authFailure, logout, setAuthMode } =
+  authSlice.actions
 
 export default authSlice.reducer

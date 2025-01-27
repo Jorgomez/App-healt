@@ -1,69 +1,66 @@
-// components/common/buttons/PrimaryButton.tsx
-// import { PrimaryButtonProps } from '@/types/components/buttons'
-// import React from 'react'
-// import { Pressable, Text, StyleSheet, ActivityIndicator } from 'react-native'
+import React from 'react'
+import { Pressable, Text, ActivityIndicator, StyleSheet } from 'react-native'
+import { Ionicons } from '@expo/vector-icons'
+import { colors, spacing, typography } from '@/theme'
+import {
+  PrimaryButtonProps,
+  SocialButtonProps
+} from '@/types/components/buttons'
 
-// export const PrimaryButton: React.FC<PrimaryButtonProps> = ({
-//   onPress,
-//   title,
-//   disabled = false,
-//   loading = false,
-//   fullWidth = false,
-//   size = 'medium'
-// }) => {
-//   return (
-//     <Pressable
-//       onPress={onPress}
-//       disabled={disabled || loading}
-//       style={({ pressed }) => [
-//         styles.button,
-//         fullWidth && styles.fullWidth,
-//         styles[size],
-//         pressed && styles.pressed,
-//         disabled && styles.disabled
-//       ]}
-//     >
-//       {loading ? (
-//         <ActivityIndicator color='white' />
-//       ) : (
-//         <Text style={styles.text}>{title}</Text>
-//       )}
-//     </Pressable>
-//   )
-// }
+const PrimaryButton: React.FC<PrimaryButtonProps | SocialButtonProps> = ({
+  onPress,
+  title,
+  disabled,
+  loading,
+  icon,
+  style,
+  textStyle
+}) => (
+  <Pressable
+    style={({ pressed }) => [
+      styles.button,
+      { opacity: pressed ? 0.5 : 1 },
+      disabled && styles.disabled,
+      style
+    ]}
+    onPress={onPress}
+    disabled={disabled || loading}
+  >
+    {loading ? (
+      <ActivityIndicator color='white' />
+    ) : (
+      <>
+        <Text style={[styles.text, textStyle]}>{title}</Text>
+        {icon && (
+          <Ionicons name={icon} size={24} color='white' style={styles.icon} />
+        )}
+      </>
+    )}
+  </Pressable>
+)
 
-// const styles = StyleSheet.create({
-//   button: {
-//     backgroundColor: '#007AFF', // color primario iOS
-//     borderRadius: 8,
-//     padding: 12,
-//     alignItems: 'center',
-//     justifyContent: 'center'
-//   },
-//   fullWidth: {
-//     width: '100%'
-//   },
-//   text: {
-//     color: 'white',
-//     fontSize: 16,
-//     fontWeight: '600'
-//   },
-//   pressed: {
-//     opacity: 0.8
-//   },
-//   disabled: {
-//     backgroundColor: '#A0A0A0'
-//   },
-//   small: {
-//     paddingVertical: 8,
-//     paddingHorizontal: 16
-//   },
-//   medium: {
-//     paddingVertical: 12,
-//     paddingHorizontal: 24
-//   },
-//   large: {
-//     paddingVertical: 16,
-//     paddingHorizontal: 32
-//   }
-// })
+const styles = StyleSheet.create({
+  button: {
+    backgroundColor: colors.primary,
+    padding: spacing.md,
+    borderRadius: 8,
+    alignItems: 'center',
+    marginTop: spacing.sm,
+    flexDirection: 'row',
+    justifyContent: 'center'
+  },
+  disabled: {
+    opacity: 0.5
+  },
+  text: {
+    color: colors.background,
+    fontSize: typography.sizes.md,
+    fontWeight: typography.weights.bold,
+    marginRight: 10
+  },
+  icon: {
+    marginLeft: 10
+  }
+})
+
+export default PrimaryButton

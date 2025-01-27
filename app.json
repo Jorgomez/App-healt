@@ -14,7 +14,18 @@
     },
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.queryhealth.app"
+      "bundleIdentifier": "com.queryhealth.app",
+      "buildNumber": "1.0.0",
+
+      "config": {
+        "usesNonExemptEncryption": false
+      },
+      "infoPlist": {
+        "UIBackgroundModes": ["remote-notification"],
+        "NSCameraUsageDescription": "This app needs access to the camera",
+        "NSPhotoLibraryUsageDescription": "This app needs access to photos",
+        "NSMicrophoneUsageDescription": "This app needs access to the microphone"
+      }
     },
     "android": {
       "adaptiveIcon": {
@@ -23,15 +34,33 @@
       },
       "package": "com.queryhealth.app"
     },
+
     "web": {
       "favicon": "./assets/favicon.png",
-      "bundler": "webpack"
-    },
+      "bundler": "webpack",
+      "config": {
+        "googleSignIn": {
+          "clientId": "915431051466-0dbfjoukefteb8jda3v354be1ad2l0fn.apps.googleusercontent.com",
+          "scopes": ["profile", "email"]
+        },
+        "twitter": {
+          "clientId": "NjNvNlA5V1hoeWdPc0doSjMzVzk6MTpjaQ",
+          "clientSecret": "x4IoBJQkNUYEewfy-EEBkC1oFAtJLNkwRoiHwESVgsGNhX7bgJ"
+        },
 
-    "extra": {
-      "eas": {
-        "projectId": "3f81e023-4092-4132-80bf-a8d879167538"
+        "firebase": {
+          "authDomain": "chat-app-def.firebaseapp.com"
+        }
+      },
+
+      "extra": {
+        "eas": {
+          "projectId": "3f81e023-4092-4132-80bf-a8d879167538"
+        },
+        "googleClientId": "915431051466-0dbfjoukefteb8jda3v354be1ad2l0fn.apps.googleusercontent.com"
       }
-    }
+    },
+    "scheme": "com.queryhealth.app",
+    "plugins": ["expo-system-ui"]
   }
 }

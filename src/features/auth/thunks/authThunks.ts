@@ -1,11 +1,4 @@
-import {
-  registerStart,
-  registerSuccess,
-  registerFailure,
-  loginStart,
-  loginSuccess,
-  loginFailure
-} from '../slices/authSlice'
+import { authStart, authSuccess, authFailure } from '../slices/authSlice'
 import { User, RegisterData, LoginData } from '@/features/auth/types/auth'
 import { AppDispatch } from '../../../store/config/store'
 import { authService } from '@/features/auth/services/baseAuthService'
@@ -13,28 +6,29 @@ import { authService } from '@/features/auth/services/baseAuthService'
 export const register =
   (data: RegisterData) => async (dispatch: AppDispatch) => {
     try {
-      dispatch(registerStart())
+      dispatch(authStart())
       const user = await authService.registerUser(data)
-      dispatch(registerSuccess(user))
+      dispatch(authSuccess(user))
       return true
     } catch (error) {
       dispatch(
-        registerFailure(
+        authFailure(
           error instanceof Error ? error.message : 'Registration failed'
         )
       )
       return false
     }
   }
+
 export const login = (data: LoginData) => async (dispatch: AppDispatch) => {
   try {
-    dispatch(loginStart())
+    dispatch(authStart())
     const user = await authService.loginUser(data)
-    dispatch(loginSuccess(user))
+    dispatch(authSuccess(user))
     return true
   } catch (error) {
     dispatch(
-      loginFailure(error instanceof Error ? error.message : 'Login failed')
+      authFailure(error instanceof Error ? error.message : 'Login failed')
     )
     return false
   }

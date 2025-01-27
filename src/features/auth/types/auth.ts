@@ -1,7 +1,8 @@
 export interface User {
   id: string
+  email: string | null // Cambiado para aceptar null
   username: string
-  email: string
+  photoURL?: string | null
 }
 
 export interface RegisterData {

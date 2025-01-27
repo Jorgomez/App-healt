@@ -1,31 +1,17 @@
 import React from 'react'
-import {
-  View,
-  Text,
-  TextInput,
-  Pressable,
-  ActivityIndicator,
-  StyleSheet
-} from 'react-native'
+import { View, Text, TextInput, StyleSheet, Platform } from 'react-native'
 import { useForm, Controller } from 'react-hook-form'
 import { useSelector } from 'react-redux'
 import { yupResolver } from '@hookform/resolvers/yup'
-import { useNavigation } from '@react-navigation/native'
-import type { NativeStackNavigationProp } from '@react-navigation/native-stack'
-
 import { LoginData } from '@/features/auth/types/auth'
 import { colors, spacing, typography } from '@/theme'
 import { RootState } from '@/store/config/store'
-import { RootStackParamList } from '@/navigation/types'
-import { useAppDispatch } from '@/store/hooks'
-
-import { loginSchema, signUpSchema } from '@/validations/auth'
-import { login } from '@/features/auth/thunks/authThunks'
+import { loginSchema } from '@/validations/auth'
+import PrimaryButton from '@/components/common/buttons/PrimaryButton'
+import { useLoginForm } from '@/features/auth/hooks/useAuth'
 
 const LoginForm = () => {
-  const navigation =
-    useNavigation<NativeStackNavigationProp<RootStackParamList>>()
-  const dispatch = useAppDispatch()
+  const onSumbit = useLoginForm()
   const { isLoading, error } = useSelector((state: RootState) => state.auth)
   const {
     control,
@@ -34,13 +20,6 @@ const LoginForm = () => {
   } = useForm<LoginData>({
     resolver: yupResolver(loginSchema)
   })
-
-  const onSubmit = async (data: LoginData) => {
-    const success = await dispatch(login(data))
-    if (success) {
-      navigation.navigate('Home')
-    }
-  }
 
   return (
     <View style={styles.formContainer}>
@@ -61,6 +40,9 @@ const LoginForm = () => {
                 keyboardType='email-address'
                 autoCapitalize='none'
                 editable={!isLoading}
+                textContentType='emailAddress'
+                autoComplete='email'
+                clearButtonMode='while-editing'
               />
               {errors.email && (
                 <Text style={styles.errorText}>{errors.email.message}</Text>
@@ -85,6 +67,9 @@ const LoginForm = () => {
                 secureTextEntry
                 editable={!isLoading}
                 autoCapitalize='none'
+                textContentType='password'
+                autoComplete='password'
+                clearButtonMode='while-editing'
               />
               {errors.password && (
                 <Text style={styles.errorText}>{errors.password.message}</Text>
@@ -94,26 +79,12 @@ const LoginForm = () => {
         />
       </View>
 
-      <Pressable
-        style={({ pressed }) => [
-          styles.submitButton,
-          { opacity: pressed ? 0.5 : 1 }
-        ]}
+      <PrimaryButton
+        title='Sign In'
+        onPress={handleSubmit(onSumbit)}
         disabled={isLoading}
-        onPress={handleSubmit(onSubmit)}
-      >
-        {isLoading ? (
-          <ActivityIndicator color='white' />
-        ) : (
-          <Text style={styles.submitButtonText}>Sign In</Text>
-        )}
-      </Pressable>
-
-      <View style={styles.dividerContainer}>
-        <View style={styles.divider} />
-        <Text style={styles.dividerText}>or</Text>
-        <View style={styles.divider} />
-      </View>
+        loading={isLoading}
+      />
     </View>
   )
 }
@@ -143,40 +114,15 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: '#e0e0e0',
     borderRadius: 8,
-    padding: spacing.md,
+    padding: Platform.OS === 'ios' ? 16 : spacing.md,
     marginBottom: spacing.xs,
-    fontSize: typography.sizes.md
+    fontSize: typography.sizes.md,
+    color: colors.text
   },
   errorText: {
     color: colors.error,
     marginBottom: spacing.sm,
     fontSize: typography.sizes.xs
-  },
-  submitButton: {
-    backgroundColor: colors.primary,
-    padding: spacing.md,
-    borderRadius: 8,
-    alignItems: 'center',
-    marginTop: spacing.sm
-  },
-  submitButtonText: {
-    color: colors.background,
-    fontSize: typography.sizes.md,
-    fontWeight: typography.weights.bold
-  },
-  dividerContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginVertical: spacing.md
-  },
-  divider: {
-    flex: 1,
-    height: 1,
-    backgroundColor: '#e0e0e0'
-  },
-  dividerText: {
-    marginHorizontal: spacing.sm,
-    color: colors.gray
   }
 })
 

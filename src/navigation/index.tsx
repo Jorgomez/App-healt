@@ -3,7 +3,7 @@ import { NavigationContainer } from '@react-navigation/native'
 import { createNativeStackNavigator } from '@react-navigation/native-stack'
 import { RootStackParamList } from './types'
 
-import WelcomeScreen from '../screens/Welcome'
+import WelcomeScreen from '../screens/Welcome/welcome'
 
 import HomeScreen from '../screens/Home'
 import AuthScreen from '@/screens/Auth/AuthScreen'
