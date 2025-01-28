@@ -11,6 +11,9 @@ import { Ionicons } from '@expo/vector-icons'
 import { useSelector } from 'react-redux'
 import { RootState } from '@/store/config/store'
 import { HomeScreenProps } from '@/navigation/types'
+import LogoutButton from '@/components/common/buttons/LogoutButton'
+import ProfileMenu from '@/components/common/menus/ProfileMenu'
+import AsyncStorage from '@react-native-async-storage/async-storage'
 
 const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
   const { username } = useSelector((state: RootState) => state.auth)
@@ -19,13 +22,34 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
     navigation.navigate('ChatSelection')
   }
 
+  const checkStorage = async () => {
+    try {
+      const keys = await AsyncStorage.getAllKeys()
+      const items = await AsyncStorage.multiGet(keys)
+
+      items.forEach(([key, value]) => {
+        if (key.includes('firebase') && value) {
+          console.log('🔵 Firebase Auth:', JSON.parse(value))
+        }
+        if (key === 'persist:root' && value) {
+          const persistData = JSON.parse(value)
+          console.log('🔵 App State:', JSON.parse(persistData.auth))
+        }
+      })
+    } catch (error) {
+      console.error('Error:', error)
+    }
+  }
+
+  React.useEffect(() => {
+    checkStorage()
+  }, [])
+
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.header}>
         <Text style={styles.headerTitle}>Welcome, {username || 'User'}</Text>
-        <TouchableOpacity style={styles.profileIcon}>
-          <Ionicons name='person-circle-outline' size={35} color='#3498db' />
-        </TouchableOpacity>
+        <ProfileMenu />
       </View>
 
       <ScrollView
@@ -92,9 +116,6 @@ const styles = StyleSheet.create({
     fontSize: 22,
     fontWeight: 'bold',
     color: '#2c3e50'
-  },
-  profileIcon: {
-    padding: 5
   },
   contentContainer: {
     flexGrow: 1,

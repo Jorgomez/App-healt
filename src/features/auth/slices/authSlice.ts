@@ -27,11 +27,20 @@ const authSlice = createSlice({
       state.isLoading = true
       state.error = null
     },
-    authSuccess: (state, action: PayloadAction<User>) => {
+    authSuccess: (state, action: PayloadAction<any>) => {
       state.isLoading = false
       state.isAuthenticated = true
-      state.user = action.payload
-      state.username = action.payload.username
+      state.user = {
+        id: action.payload.id || action.payload.uid,
+        email: action.payload.email,
+        username:
+          action.payload.username ||
+          action.payload.displayName ||
+          action.payload.email?.split('@')[0] ||
+          'User',
+        photoURL: action.payload.photoURL || null
+      }
+      state.username = state.user?.username || null
     },
     authFailure: (state, action: PayloadAction<string>) => {
       state.isLoading = false

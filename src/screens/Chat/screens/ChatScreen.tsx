@@ -1,26 +1,82 @@
-import React from 'react'
+import React, { useEffect, useState, useRef } from 'react'
 import {
   View,
   KeyboardAvoidingView,
   Platform,
   ScrollView,
   SafeAreaView,
-  StyleSheet
+  StyleSheet,
+  Keyboard
 } from 'react-native'
+import { useAppDispatch, useAppSelector } from '@/store/hooks'
 import ChatInput from '@/components/common/inputs/ChatInput'
 import ChatHeader from '../components/ChatHeader'
 import { ChatScreenProps } from '@/navigation/types'
+import {
+  initializeChat,
+  sendMessage,
+  leaveChat
+} from '@/features/chat/thunks/chatThunks'
+import { clearMessages, setCurrentRoom } from '@/features/chat/slices/chatSlice'
+import { socketService } from '@/services/socket/socketService'
+import ChatMessage from '../components/ChatMessage'
 
 const ChatScreen: React.FC<ChatScreenProps> = ({ navigation, route }) => {
-  const chatType = route.params?.chatType || 'ai'
+  const dispatch = useAppDispatch()
+  const { chatType, roomId } = route.params
+  const { userId, user } = useAppSelector((state) => state.auth)
+  const { messages, isConnected } = useAppSelector((state) => state.chat)
+  const isDoctor = chatType === 'doctor'
+  const [messagesState, setMessagesState] = useState<any[]>([])
+  const scrollViewRef = useRef<ScrollView>(null)
+
+  useEffect(() => {
+    if (user?.id) {
+      console.log('🔄 Iniciando chat...')
+      const socket = socketService.connect(user.id)
+
+      socket.on('receive_message', (data) => {
+        setMessagesState((prev) => [...prev, data])
+      })
+
+      if (roomId) {
+        socketService.joinRoom(roomId)
+        setTimeout(() => {
+          const welcomeMessage = `${
+            isDoctor ? 'Doctor' : 'Paciente'
+          } se ha conectado al chat`
+          socketService.sendSystemMessage(roomId, welcomeMessage, isDoctor)
+        }, 1000)
+      }
+    }
+
+    return () => {
+      socketService.disconnect()
+    }
+  }, [user?.id, roomId])
 
   const handleSend = (message: string) => {
-    // Lógica para enviar mensaje
+    if (message.trim() && roomId) {
+      console.log(`Enviando mensaje como ${isDoctor ? 'Doctor' : 'Paciente'}`)
+      socketService.sendMessage(roomId, message, isDoctor)
+    }
   }
 
   const handleBack = () => {
     navigation.goBack()
   }
+
+  // Función para scroll automático
+  const scrollToBottom = () => {
+    scrollViewRef.current?.scrollToEnd({ animated: true })
+  }
+
+  // Scroll cuando llegan nuevos mensajes
+  useEffect(() => {
+    if (messagesState.length > 0) {
+      setTimeout(scrollToBottom, 100)
+    }
+  }, [messagesState])
 
   return (
     <SafeAreaView style={styles.safeArea}>
@@ -29,18 +85,30 @@ const ChatScreen: React.FC<ChatScreenProps> = ({ navigation, route }) => {
       <KeyboardAvoidingView
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
         style={styles.keyboardView}
-        keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 20}
+        keyboardVerticalOffset={Platform.OS === 'ios' ? 90 : 0}
       >
         <ScrollView
+          ref={scrollViewRef}
           style={styles.messageList}
           contentContainerStyle={styles.scrollContent}
           keyboardShouldPersistTaps='handled'
+          onContentSizeChange={scrollToBottom}
         >
-          {/* Lista de mensajes */}
+          {messagesState.map((msg, index) => (
+            <ChatMessage
+              key={index}
+              message={msg.message}
+              isDoctor={msg.isDoctor}
+              isSender={msg.userId === user?.id}
+              timestamp={msg.timestamp}
+            />
+          ))}
         </ScrollView>
-        <View style={styles.inputContainer}>
-          <ChatInput onSend={handleSend} />
-        </View>
+
+        <ChatInput
+          onSend={handleSend}
+          onFocus={() => setTimeout(scrollToBottom, 100)}
+        />
       </KeyboardAvoidingView>
     </SafeAreaView>
   )
@@ -59,11 +127,8 @@ const styles = StyleSheet.create({
   },
   scrollContent: {
     flexGrow: 1,
-    padding: 20
-  },
-  inputContainer: {
-    borderTopWidth: 1,
-    borderTopColor: '#e0e0e0'
+    paddingHorizontal: 15,
+    paddingBottom: 15
   }
 })
 

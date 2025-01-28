@@ -4,6 +4,7 @@ import { LoginData, RegisterData } from '../types/auth'
 import { login, register } from '../thunks/authThunks'
 import { RootStackParamList } from '@/navigation/types'
 import { NativeStackNavigationProp } from '@react-navigation/native-stack'
+import { authSuccess } from '../slices/authSlice'
 
 export const useRegisterForm = () => {
   const navigation =
@@ -20,6 +21,7 @@ export const useRegisterForm = () => {
 
   return onSubmit
 }
+
 export const useLoginForm = () => {
   const navigation =
     useNavigation<NativeStackNavigationProp<RootStackParamList>>()
@@ -28,7 +30,6 @@ export const useLoginForm = () => {
   const onSubmit = async (data: LoginData) => {
     const success = await dispatch(login(data))
     if (success) {
-      console.log(data)
       navigation.navigate('Home')
     }
   }

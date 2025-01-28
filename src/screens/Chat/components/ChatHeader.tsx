@@ -3,13 +3,24 @@ import { View, Text, StyleSheet, TouchableOpacity } from 'react-native'
 import { Ionicons } from '@expo/vector-icons'
 
 interface ChatHeaderProps {
-  chatType: 'doctor' | 'ai'
+  chatType: 'doctor' | 'ai' | 'patient'
   onBackPress: () => void
 }
 
 const ChatHeader = ({ chatType, onBackPress }: ChatHeaderProps) => {
   const name =
-    chatType === 'doctor' ? 'Dr. Sarah Johnson' : 'AI Health Assistant'
+    chatType === 'patient'
+      ? 'Patient Chat'
+      : chatType === 'doctor'
+      ? 'Dr. Sarah Johnson'
+      : 'AI Health Assistant'
+
+  const role =
+    chatType === 'patient'
+      ? 'Patient Messages'
+      : chatType === 'doctor'
+      ? 'Medical Doctor'
+      : 'AI Assistant'
 
   return (
     <View style={styles.header}>
@@ -20,16 +31,20 @@ const ChatHeader = ({ chatType, onBackPress }: ChatHeaderProps) => {
       <View style={styles.profileContainer}>
         <View style={styles.avatarContainer}>
           <Ionicons
-            name={chatType === 'doctor' ? 'person-circle' : 'logo-github'}
+            name={
+              chatType === 'patient'
+                ? 'people'
+                : chatType === 'doctor'
+                ? 'person-circle'
+                : 'logo-github'
+            }
             size={40}
             color='#3498db'
           />
         </View>
         <View style={styles.nameContainer}>
           <Text style={styles.name}>{name}</Text>
-          <Text style={styles.status}>
-            {chatType === 'doctor' ? 'Medical Doctor' : 'AI Assistant'}
-          </Text>
+          <Text style={styles.status}>{role}</Text>
         </View>
       </View>
     </View>

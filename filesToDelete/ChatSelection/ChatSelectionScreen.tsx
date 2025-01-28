@@ -15,9 +15,7 @@ import Header from './components/Header'
 import ChatOption from './components/ChatOption'
 import Footer from './components/Footer'
 
-const ChatSelectionScreen: React.FC<ChatSelectionScreenProps> = ({
-  navigation
-}) => {
+const ChatSelectionScreen: React.FC<ChatSelectionScreenProps> = ({ navigation }) => {
   const { username } = useSelector((state: RootState) => state.auth)
 
   const handleChatSelect = (chatType: 'doctor' | 'ai') => {
@@ -26,28 +24,26 @@ const ChatSelectionScreen: React.FC<ChatSelectionScreenProps> = ({
 
   return (
     <SafeAreaView style={styles.container}>
-      <Header title='AI Chat' />
-
+      <Header title="AI Chat" />
+      
       <ScrollView style={styles.content}>
         <View style={styles.welcomeSection}>
           <Text style={styles.username}>{username || 'User'}</Text>
-          <Text style={styles.subtitle}>
-            Who would you like to chat with today?
-          </Text>
+          <Text style={styles.subtitle}>Who would you like to chat with today?</Text>
         </View>
 
         <View style={styles.optionsSection}>
           <ChatOption
-            title='Your Personal Doctor'
-            description='Chat with a medical professional'
-            icon='medical'
+            title="Your Personal Doctor"
+            description="Chat with a medical professional"
+            icon="medical"
             onPress={() => handleChatSelect('doctor')}
           />
-
+          
           <ChatOption
-            title='Your AI Health Assistant'
-            description='Get instant AI-powered health guidance'
-            icon='brain'
+            title="Your AI Health Assistant"
+            description="Get instant AI-powered health guidance"
+            icon="brain"
             onPress={() => handleChatSelect('ai')}
           />
         </View>
@@ -87,4 +83,4 @@ const styles = StyleSheet.create({
   }
 })
 
-export default ChatSelectionScreen
+export default ChatSelectionScreen 

@@ -1,8 +1,9 @@
 export interface User {
   id: string
-  email: string | null // Cambiado para aceptar null
+  email: string | null
   username: string
   photoURL?: string | null
+  role?: 'user' | 'doctor' // Agregamos el campo role
 }
 
 export interface RegisterData {
@@ -10,10 +11,12 @@ export interface RegisterData {
   email: string
   password: string
 }
+
 export interface LoginData {
   email: string
   password: string
 }
+
 export interface AuthState {
   user: User | null
   isAuthenticated: boolean

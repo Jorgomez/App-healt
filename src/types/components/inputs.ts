@@ -20,8 +20,7 @@ export interface FormInputProps<T extends FieldValues>
 }
 
 // Chat Input Types
-export interface ChatInputProps
-  extends Omit<BaseInputProps, 'value' | 'onChangeText'> {
+export interface ChatInputProps {
   onSend: (message: string) => void
-  placeholder?: string
+  onFocus?: () => void
 }

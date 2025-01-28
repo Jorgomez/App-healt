@@ -4,7 +4,9 @@ export type RootStackParamList = {
   Auth: undefined
   ChatSelection: undefined
   Chat: {
-    chatType: 'doctor' | 'ai'
+    chatType: 'doctor' | 'ai' | 'patient'
+    roomId: string
+    isDoctor?: boolean
   }
   Home: undefined
 }

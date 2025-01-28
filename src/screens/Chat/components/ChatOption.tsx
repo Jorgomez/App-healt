@@ -7,13 +7,32 @@ interface ChatOptionProps {
   description: string
   icon: string
   onPress: () => void
+  disabled?: boolean
 }
 
-const ChatOption = ({ title, description, icon, onPress }: ChatOptionProps) => (
-  <TouchableOpacity style={styles.option} onPress={onPress}>
-    <Ionicons name={icon as any} size={30} color='#3498db' />
-    <Text style={styles.optionTitle}>{title}</Text>
-    <Text style={styles.optionDescription}>{description}</Text>
+const ChatOption = ({
+  title,
+  description,
+  icon,
+  onPress,
+  disabled
+}: ChatOptionProps) => (
+  <TouchableOpacity
+    style={[styles.option, disabled && styles.optionDisabled]}
+    onPress={onPress}
+    disabled={disabled}
+  >
+    <Ionicons
+      name={icon as any}
+      size={30}
+      color={disabled ? '#999' : '#3498db'}
+    />
+    <Text style={[styles.optionTitle, disabled && styles.textDisabled]}>
+      {title}
+    </Text>
+    <Text style={[styles.optionDescription, disabled && styles.textDisabled]}>
+      {description}
+    </Text>
   </TouchableOpacity>
 )
 
@@ -30,6 +49,9 @@ const styles = StyleSheet.create({
     shadowRadius: 4,
     elevation: 3
   },
+  optionDisabled: {
+    opacity: 0.6
+  },
   optionTitle: {
     fontSize: 18,
     fontWeight: 'bold',
@@ -41,6 +63,9 @@ const styles = StyleSheet.create({
     color: '#666',
     textAlign: 'center',
     marginTop: 5
+  },
+  textDisabled: {
+    color: '#999'
   }
 })
 

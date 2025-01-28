@@ -18,37 +18,56 @@ import Footer from '../components/Footer'
 const SelectionScreen: React.FC<ChatSelectionScreenProps> = ({
   navigation
 }) => {
-  const { username } = useSelector((state: RootState) => state.auth)
+  const { user } = useSelector((state: RootState) => state.auth)
+  const isDoctor = user?.role === 'doctor'
 
-  const handleChatSelect = (chatType: 'doctor' | 'ai') => {
-    navigation.navigate('Chat', { chatType })
+  console.log('User role:', user?.role)
+  console.log('Is doctor:', isDoctor)
+
+  // Sala fija para todas las conversaciones doctor-paciente
+  const DOCTOR_PATIENT_ROOM = 'doctor_patient_room_1'
+
+  const handleChatSelect = (chatType: 'doctor' | 'ai' | 'patient') => {
+    if (chatType === 'ai') return // Por ahora ignoramos el AI chat
+
+    navigation.navigate('Chat', {
+      chatType,
+      roomId: DOCTOR_PATIENT_ROOM
+    })
   }
 
   return (
     <SafeAreaView style={styles.container}>
-      <Header title='AI Chat' />
+      <Header title='Health Chat' />
 
       <ScrollView style={styles.content}>
         <View style={styles.welcomeSection}>
-          <Text style={styles.username}>{username || 'User'}</Text>
-          <Text style={styles.subtitle}>
-            Who would you like to chat with today?
-          </Text>
+          <Text style={styles.username}>{user?.username || 'User'}</Text>
+          <Text style={styles.subtitle}>Select your role to chat</Text>
         </View>
 
         <View style={styles.optionsSection}>
           <ChatOption
-            title='Your Personal Doctor'
-            description='Chat with a medical professional'
+            title='Join as Patient'
+            description='Chat with your doctor'
+            icon='person'
+            onPress={() => handleChatSelect('patient')}
+          />
+
+          <ChatOption
+            title='Join as Doctor'
+            description='Respond to patient inquiries'
             icon='medical'
             onPress={() => handleChatSelect('doctor')}
           />
 
+          {/* AI opción deshabilitada por ahora */}
           <ChatOption
-            title='Your AI Health Assistant'
-            description='Get instant AI-powered health guidance'
+            title='AI Assistant (Coming Soon)'
+            description='Get AI health guidance'
             icon='brain'
             onPress={() => handleChatSelect('ai')}
+            disabled
           />
         </View>
       </ScrollView>
@@ -84,6 +103,24 @@ const styles = StyleSheet.create({
   },
   optionsSection: {
     marginTop: 30
+  },
+  patientOption: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: 'white',
+    padding: 15,
+    borderRadius: 10,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3
+  },
+  patientOptionText: {
+    marginLeft: 10,
+    fontSize: 16,
+    color: '#2c3e50',
+    fontWeight: '600'
   }
 })
 
