@@ -18,7 +18,7 @@ import { RootState } from '@/store/config/store'
 import { RegisterData } from '@/features/auth/types/auth'
 import { useAppDispatch } from '@/store/hooks'
 import { signUpSchema } from '@/validations/auth'
-import GoogleSignUpButton from '@/components/screens/auth/GoogleSignUpButton'
+import GoogleSignUpButton from 'filesToDelete/GoogleSignUpButton'
 
 const SignUpScreen: React.FC<SignUpScreenProps> = ({ navigation }) => {
   const dispatch = useAppDispatch()

@@ -1,6 +1,6 @@
 import React from 'react'
-import { View, Text, TextInput, StyleSheet, Platform } from 'react-native'
-import { useForm, Controller } from 'react-hook-form'
+import { View, Text, StyleSheet } from 'react-native'
+import { useForm } from 'react-hook-form'
 import { useSelector } from 'react-redux'
 import { yupResolver } from '@hookform/resolvers/yup'
 import { LoginData } from '@/features/auth/types/auth'
@@ -9,15 +9,12 @@ import { RootState } from '@/store/config/store'
 import { loginSchema } from '@/validations/auth'
 import PrimaryButton from '@/components/common/buttons/PrimaryButton'
 import { useLoginForm } from '@/features/auth/hooks/useAuth'
+import FormInput from '@/components/common/inputs/FormInput'
 
 const LoginForm = () => {
-  const onSumbit = useLoginForm()
+  const onSubmit = useLoginForm()
   const { isLoading, error } = useSelector((state: RootState) => state.auth)
-  const {
-    control,
-    handleSubmit,
-    formState: { errors }
-  } = useForm<LoginData>({
+  const { control, handleSubmit } = useForm<LoginData>({
     resolver: yupResolver(loginSchema)
   })
 
@@ -25,63 +22,33 @@ const LoginForm = () => {
     <View style={styles.formContainer}>
       {error && <Text style={styles.errorText}>{error}</Text>}
 
-      <View style={styles.inputGroup}>
-        <Text style={styles.label}>Email</Text>
-        <Controller
-          control={control}
-          name='email'
-          render={({ field: { onChange, value } }) => (
-            <View>
-              <TextInput
-                style={styles.input}
-                placeholder='Enter your email'
-                onChangeText={onChange}
-                value={value}
-                keyboardType='email-address'
-                autoCapitalize='none'
-                editable={!isLoading}
-                textContentType='emailAddress'
-                autoComplete='email'
-                clearButtonMode='while-editing'
-              />
-              {errors.email && (
-                <Text style={styles.errorText}>{errors.email.message}</Text>
-              )}
-            </View>
-          )}
-        />
-      </View>
+      <FormInput
+        control={control}
+        name='email'
+        label='Email'
+        placeholder='Enter your email'
+        keyboardType='email-address'
+        autoCapitalize='none'
+        returnKeyType='next'
+        blurOnSubmit={false}
+        editable={!isLoading}
+      />
 
-      <View style={styles.inputGroup}>
-        <Text style={styles.label}>Password</Text>
-        <Controller
-          control={control}
-          name='password'
-          render={({ field: { onChange, value } }) => (
-            <View>
-              <TextInput
-                style={styles.input}
-                placeholder='Enter your password'
-                onChangeText={onChange}
-                value={value}
-                secureTextEntry
-                editable={!isLoading}
-                autoCapitalize='none'
-                textContentType='password'
-                autoComplete='password'
-                clearButtonMode='while-editing'
-              />
-              {errors.password && (
-                <Text style={styles.errorText}>{errors.password.message}</Text>
-              )}
-            </View>
-          )}
-        />
-      </View>
+      <FormInput
+        control={control}
+        name='password'
+        label='Password'
+        placeholder='Enter your password'
+        secureTextEntry
+        autoCapitalize='none'
+        returnKeyType='done'
+        onSubmitEditing={handleSubmit(onSubmit)}
+        editable={!isLoading}
+      />
 
       <PrimaryButton
         title='Sign In'
-        onPress={handleSubmit(onSumbit)}
+        onPress={handleSubmit(onSubmit)}
         disabled={isLoading}
         loading={isLoading}
       />
@@ -99,25 +66,6 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.1,
     shadowRadius: 4,
     elevation: 3
-  },
-  inputGroup: {
-    marginBottom: spacing.md
-  },
-  label: {
-    fontSize: typography.sizes.sm,
-    color: colors.text,
-    marginBottom: spacing.xs,
-    fontWeight: typography.weights.medium
-  },
-  input: {
-    backgroundColor: '#f7f8f9',
-    borderWidth: 1,
-    borderColor: '#e0e0e0',
-    borderRadius: 8,
-    padding: Platform.OS === 'ios' ? 16 : spacing.md,
-    marginBottom: spacing.xs,
-    fontSize: typography.sizes.md,
-    color: colors.text
   },
   errorText: {
     color: colors.error,

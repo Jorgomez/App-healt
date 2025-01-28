@@ -7,6 +7,7 @@ interface AuthState {
   isLoading: boolean
   error: string | null
   mode: 'login' | 'register'
+  username: string | null
 }
 
 const initialState: AuthState = {
@@ -14,7 +15,8 @@ const initialState: AuthState = {
   isAuthenticated: false,
   isLoading: false,
   error: null,
-  mode: 'login'
+  mode: 'login',
+  username: null
 }
 
 const authSlice = createSlice({
@@ -29,6 +31,7 @@ const authSlice = createSlice({
       state.isLoading = false
       state.isAuthenticated = true
       state.user = action.payload
+      state.username = action.payload.username
     },
     authFailure: (state, action: PayloadAction<string>) => {
       state.isLoading = false
@@ -39,6 +42,7 @@ const authSlice = createSlice({
       state.isAuthenticated = false
       state.error = null
       state.mode = 'login'
+      state.username = null
     },
     setAuthMode: (state, action: PayloadAction<'login' | 'register'>) => {
       state.mode = action.payload

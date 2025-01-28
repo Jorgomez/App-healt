@@ -1,15 +1,18 @@
 import { NativeStackScreenProps } from '@react-navigation/native-stack'
 
 export type RootStackParamList = {
-  Welcome: undefined
   Auth: undefined
+  ChatSelection: undefined
+  Chat: {
+    chatType: 'doctor' | 'ai'
+  }
   Home: undefined
 }
 
-export type WelcomeScreenProps = NativeStackScreenProps<
-  RootStackParamList,
-  'Welcome'
->
 export type AuthScreenProps = NativeStackScreenProps<RootStackParamList, 'Auth'>
-
 export type HomeScreenProps = NativeStackScreenProps<RootStackParamList, 'Home'>
+export type ChatScreenProps = NativeStackScreenProps<RootStackParamList, 'Chat'>
+export type ChatSelectionScreenProps = NativeStackScreenProps<
+  RootStackParamList,
+  'ChatSelection'
+>
