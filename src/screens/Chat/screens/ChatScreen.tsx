@@ -8,80 +8,34 @@ import {
   StyleSheet,
   Keyboard
 } from 'react-native'
-import { useAppDispatch, useAppSelector } from '@/store/hooks'
 import ChatInput from '@/components/common/inputs/ChatInput'
 import ChatHeader from '../components/ChatHeader'
 import { ChatScreenProps } from '@/navigation/types'
-import {
-  initializeChat,
-  sendMessage,
-  leaveChat
-} from '@/features/chat/thunks/chatThunks'
-import { clearMessages, setCurrentRoom } from '@/features/chat/slices/chatSlice'
-import { socketService } from '@/services/socket/socketService'
 import ChatMessage from '../components/ChatMessage'
+import { useChat } from '@/features/chat/hooks/useChat'
 
 const ChatScreen: React.FC<ChatScreenProps> = ({ navigation, route }) => {
-  const dispatch = useAppDispatch()
   const { chatType, roomId } = route.params
-  const { userId, user } = useAppSelector((state) => state.auth)
-  const { messages, isConnected } = useAppSelector((state) => state.chat)
   const isDoctor = chatType === 'doctor'
-  const [messagesState, setMessagesState] = useState<any[]>([])
+  const { messages, sendMessage, user } = useChat(roomId, isDoctor)
   const scrollViewRef = useRef<ScrollView>(null)
-
-  useEffect(() => {
-    if (user?.id) {
-      console.log('🔄 Iniciando chat...')
-      const socket = socketService.connect(user.id)
-
-      socket.on('receive_message', (data) => {
-        setMessagesState((prev) => [...prev, data])
-      })
-
-      if (roomId) {
-        socketService.joinRoom(roomId)
-        setTimeout(() => {
-          const welcomeMessage = `${
-            isDoctor ? 'Doctor' : 'Paciente'
-          } se ha conectado al chat`
-          socketService.sendSystemMessage(roomId, welcomeMessage, isDoctor)
-        }, 1000)
-      }
-    }
-
-    return () => {
-      socketService.disconnect()
-    }
-  }, [user?.id, roomId])
-
-  const handleSend = (message: string) => {
-    if (message.trim() && roomId) {
-      console.log(`Enviando mensaje como ${isDoctor ? 'Doctor' : 'Paciente'}`)
-      socketService.sendMessage(roomId, message, isDoctor)
-    }
-  }
 
   const handleBack = () => {
     navigation.goBack()
   }
-
-  // Función para scroll automático
   const scrollToBottom = () => {
     scrollViewRef.current?.scrollToEnd({ animated: true })
   }
 
-  // Scroll cuando llegan nuevos mensajes
   useEffect(() => {
-    if (messagesState.length > 0) {
+    if (messages.length > 0) {
       setTimeout(scrollToBottom, 100)
     }
-  }, [messagesState])
+  }, [messages])
 
   return (
     <SafeAreaView style={styles.safeArea}>
       <ChatHeader chatType={chatType} onBackPress={handleBack} />
-
       <KeyboardAvoidingView
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
         style={styles.keyboardView}
@@ -94,7 +48,7 @@ const ChatScreen: React.FC<ChatScreenProps> = ({ navigation, route }) => {
           keyboardShouldPersistTaps='handled'
           onContentSizeChange={scrollToBottom}
         >
-          {messagesState.map((msg, index) => (
+          {messages.map((msg, index) => (
             <ChatMessage
               key={index}
               message={msg.message}
@@ -104,9 +58,8 @@ const ChatScreen: React.FC<ChatScreenProps> = ({ navigation, route }) => {
             />
           ))}
         </ScrollView>
-
         <ChatInput
-          onSend={handleSend}
+          onSend={sendMessage}
           onFocus={() => setTimeout(scrollToBottom, 100)}
         />
       </KeyboardAvoidingView>
@@ -120,7 +73,8 @@ const styles = StyleSheet.create({
     backgroundColor: '#f4f4f8'
   },
   keyboardView: {
-    flex: 1
+    flex: 1,
+    width: '100%'
   },
   messageList: {
     flex: 1
@@ -128,7 +82,8 @@ const styles = StyleSheet.create({
   scrollContent: {
     flexGrow: 1,
     paddingHorizontal: 15,
-    paddingBottom: 15
+    paddingBottom: 15,
+    minHeight: '100%'
   }
 })
 

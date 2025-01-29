@@ -10,7 +10,7 @@ import {
 import { ChatScreenProps } from '@/navigation/types'
 import { useAppDispatch, useAppSelector } from '@/store/hooks'
 import ChatInput from '@/components/common/inputs/ChatInput'
-import ChatHeader from '../components/ChatHeader'
+import ChatHeader from '../src/screens/Chat/components/ChatHeader'
 import { socketService } from '@/services/socket/socketService'
 
 const DoctorChatScreen: React.FC<ChatScreenProps> = ({ navigation, route }) => {

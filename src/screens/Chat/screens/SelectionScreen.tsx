@@ -7,7 +7,6 @@ import {
   TouchableOpacity,
   ScrollView
 } from 'react-native'
-import { Ionicons } from '@expo/vector-icons'
 import { useSelector } from 'react-redux'
 import { RootState } from '@/store/config/store'
 import { ChatSelectionScreenProps } from '@/navigation/types'
@@ -28,7 +27,7 @@ const SelectionScreen: React.FC<ChatSelectionScreenProps> = ({
   const DOCTOR_PATIENT_ROOM = 'doctor_patient_room_1'
 
   const handleChatSelect = (chatType: 'doctor' | 'ai' | 'patient') => {
-    if (chatType === 'ai') return // Por ahora ignoramos el AI chat
+    if (chatType === 'ai') return
 
     navigation.navigate('Chat', {
       chatType,

@@ -3,6 +3,8 @@ import { SOCKET_URL } from '@/config/constants'
 import { Platform } from 'react-native'
 
 class SocketService {
+  // Métodos genéricos
+
   private socket: Socket | null = null
 
   connect(userId: string) {
@@ -11,42 +13,23 @@ class SocketService {
 
     this.socket = io(SOCKET_URL, {
       query: { userId },
-      transports: ['websocket'],
-      reconnection: true,
-      reconnectionAttempts: 3
-    })
-
-    this.socket.on('connect', () => {
-      console.log('🟢 Socket conectado exitosamente')
-      console.log('🟢 Socket ID:', this.socket?.id)
-    })
-
-    this.socket.on('connect_error', (error) => {
-      console.error('❌ Error de conexión:', error.message)
-      console.error('❌ Error completo:', error)
+      transports: ['websocket']
     })
 
     return this.socket
   }
 
-  joinRoom(roomId: string) {
-    console.log('Intentando unirse a sala:', roomId)
-    this.socket?.emit('join_room', roomId)
+  emit(event: string, data: any) {
+    this.socket?.emit(event, data)
   }
 
-  sendMessage(roomId: string, message: string, isDoctor: boolean) {
-    this.socket?.emit('send_message', { roomId, message, isDoctor })
-  }
-
-  sendSystemMessage(roomId: string, message: string, isDoctor: boolean) {
-    this.socket?.emit('system_message', { roomId, message, isDoctor })
+  on(event: string, callback: (...args: any[]) => void) {
+    this.socket?.on(event, callback)
   }
 
   disconnect() {
-    if (this.socket) {
-      this.socket.disconnect()
-      this.socket = null
-    }
+    this.socket?.disconnect()
+    this.socket = null
   }
 }
 
